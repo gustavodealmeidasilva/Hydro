@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configurações | Hydrostats</title>
+  <script>try{var t=(document.cookie.match(/hydrostats_theme=(\w+)/)||[])[1]||localStorage.getItem('hydrostats:theme');if(t==='dark')document.documentElement.dataset.theme='dark';}catch(e){}</script>
+  <link rel="icon" type="image/png" href="images/logo-gota.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Figtree:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="assets/vendor/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/demo.css">
+</head>
+<body class="app-shell-body">
+
+<div class="hydrostats-app-shell" data-hydrostats-app-shell>
+  <aside class="hydrostats-sidebar" aria-label="Navegação principal">
+    <div class="hydrostats-sidebar-head">
+      <a class="hydrostats-brand" href="painel.html">
+        <img src="images/logo-icone.png" alt="" width="48" height="38">
+        <span>HydroStats</span>
+      </a>
+      <button class="hydrostats-menu-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#hydrostats-sidebar-body" aria-expanded="false" aria-controls="hydrostats-sidebar-body">Menu</button>
+    </div>
+    <div class="hydrostats-sidebar-body collapse" id="hydrostats-sidebar-body">
+      <div>
+        <p class="hydrostats-sidebar-label">Seu espaço</p>
+        <nav class="hydrostats-nav" aria-label="Menu principal">
+          <a class="" href="painel.html"><span aria-hidden="true">▦</span>Painel</a>
+          <a class="active" href="configuracoes.html" aria-current="page"><span aria-hidden="true">⚙</span>Configurações</a>
+          <a class="" href="perfil.html"><span aria-hidden="true">◉</span>Meu perfil</a>
+          <button class="hydrostats-theme-toggle" type="button" data-theme-toggle aria-pressed="false"><span aria-hidden="true">☾</span><span data-theme-label>Modo escuro</span></button>
+        </nav>
+      </div>
+      
+      <div class="hydrostats-sidebar-account">
+        <span class="hydrostats-avatar" aria-hidden="true">MS</span>
+        <span class="hydrostats-account-name">Maria Souza<small>Conta pessoal</small></span>
+        <button class="hydrostats-logout" type="button" data-logout>Sair</button>
+      </div>
+    </div>
+  </aside>
+  <main class="hydrostats-app-main">
+
+
+
+<div class="dashboard-wrap py-4 py-lg-5" data-device-config
+     data-data-endpoint="api/painel-dados.php"
+     data-api-path=""
+     data-tunnel-status-endpoint="api/tunnel-status.php">
+  <div class="container">
+    <div class="dashboard-heading">
+      <span class="section-kicker mb-2">Seu espaço</span>
+      <h1 class="mb-2">Configurações</h1>
+      <p class="mb-0">Gerencie seus HydroNodes, o endereço de envio e os parâmetros da estimativa.</p>
+    </div>
+
+    <div id="configuracoes-erro" class="alert alert-danger mt-4 d-none" role="alert"></div>
+
+    <section class="dashboard-card mt-4" aria-labelledby="dispositivos-configuracao-titulo">
+      <div class="card-body">
+        <div class="dashboard-card-top mb-3">
+          <div>
+            <span class="section-kicker mb-2">Monitoramento</span>
+            <h2 id="dispositivos-configuracao-titulo" class="h3 mb-0">Seus dispositivos</h2>
+          </div>
+          <button id="atualizar-dispositivos" class="btn btn-outline-primary btn-sm" type="button">Atualizar estado</button>
+        </div>
+        <div id="lista-dispositivos-configuracao" class="row g-3" aria-live="polite">
+          <div class="col-12"><div class="empty-state"><p>Carregando seus dispositivos…</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="auth-card card mt-4" aria-labelledby="novo-dispositivo-titulo">
+      <div class="card-body">
+        <span class="section-kicker mb-2">Instalação</span>
+        <h2 id="novo-dispositivo-titulo" class="h3">Adicionar dispositivo</h2>
+        <p class="text-secondary">Crie uma chave exclusiva para configurar no ESP8266. O site mostra a chave uma única vez, depois que você solicitar a criação.</p>
+        <form data-api="device-create" novalidate>
+          <div class="alert alert-danger msg d-none" role="alert"></div>
+          <div class="row g-2 align-items-end">
+            <div class="col-md-8">
+              <label class="form-label" for="nome-dispositivo">Nome do dispositivo</label>
+              <input class="form-control" type="text" id="nome-dispositivo" name="nome" minlength="2" maxlength="80" required placeholder="Ex.: Hidrômetro da cozinha">
+              <div class="invalid-feedback">Informe um nome entre 2 e 80 caracteres.</div>
+            </div>
+            <div class="col-md-4"><button class="btn btn-primary w-100" type="submit">Criar chave</button></div>
+          </div>
+        </form>
+        <div id="chave-dispositivo-box" class="alert alert-success mt-3 mb-0 d-none" role="status">
+          <p class="fw-bold mb-2">Copie e guarde esta chave agora. Ela não será mostrada novamente.</p>
+          <code id="chave-dispositivo-valor" class="d-block text-break"></code>
+          <button class="btn btn-success btn-sm mt-3" type="button" data-atualizar-painel>Já guardei — atualizar lista</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-card api-address-card mt-4" aria-labelledby="api-address-title">
+      <div class="card-body">
+        <div class="api-address-copy">
+          <span class="section-kicker mb-2">Conexão do ESP8266</span>
+          <h2 id="api-address-title" class="h3 mb-2">HTTPS ativo da API</h2>
+          <p class="text-secondary mb-3">O endereço acompanha o Quick Tunnel em execução. Copie a URL completa para configurar o ESP8266.</p>
+          <div class="api-address-row">
+            <code id="api-address-value" class="api-address-value">Verificando túnel…</code>
+            <button id="api-address-copy" class="btn btn-primary" type="button" disabled>Copiar endereço</button>
+          </div>
+          <p id="api-address-help" class="small text-secondary mb-0 mt-3" role="status"></p>
+          <p class="form-text mt-2 mb-0">Para atualizar este endereço, inicie o Quick Tunnel pelo atalho <strong>Iniciar Quick Tunnel HydroStats</strong> dentro da pasta <code>tools</code>. Se o túnel parar, o site marcará o link como indisponível.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="dashboard-card mt-4" aria-labelledby="preferencias-estimativa-titulo">
+      <div class="card-body">
+        <span class="section-kicker mb-2">Estimativa da conta</span>
+        <h2 id="preferencias-estimativa-titulo" class="h3">Preferências de consumo</h2>
+        <p class="text-secondary">Essas opções ficam salvas neste navegador e são usadas no cálculo mostrado no Painel.</p>
+        <form id="preferencias-estimativa" class="row g-3 align-items-end" novalidate>
+          <div class="col-md-6">
+            <label class="form-label" for="dia-ciclo">Dia de início do ciclo de leitura</label>
+            <input class="form-control" id="dia-ciclo" type="number" min="1" max="28" step="1" value="1" required>
+            <div class="form-text">Use o dia aproximado em que a Corsan costuma iniciar o período da sua fatura.</div>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label" for="tipo-esgoto">Esgoto na conta</label>
+            <select id="tipo-esgoto" class="form-select">
+              <option value="none">Não incluir</option>
+              <option value="collected">Coletado</option>
+              <option value="treated">Coletado e tratado</option>
+            </select>
+          </div>
+          <div class="col-12 d-flex flex-wrap align-items-center gap-3">
+            <button class="btn btn-primary" type="submit">Salvar preferências</button>
+            <span id="status-preferencias" class="small text-secondary" role="status" aria-live="polite"></span>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+</div>
+
+</main>
+
+  <footer class="hydrostats-app-footer">
+    <span>© 2026 HydroStats</span>
+    <a href="termos.html">Termos de uso</a>
+  </footer>
+</div>
+
+
+<div class="demo-badge" role="note">Versão de demonstração · dados fictícios</div>
+<script src="assets/vendor/bootstrap.bundle.min.js"></script>
+<script src="assets/js/demo-data.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/configuracoes.js" defer></script>
+</body>
+</html>
